@@ -1,0 +1,99 @@
+---
+title: 'Webhooks'
+description: 'The different webhook bodies you can expect coming from Vatr.co'
+icon: 'code'
+---
+
+## Webhooks
+
+The secret can be found on the webhook in your settings. This is to verify the integrity of the webhook.
+
+### customerCreated
+
+```json
+{
+  "secret": "whs_01hs11wsgbe63bsbg64e54e3xs",
+  "type": "customerCreated",
+  "payload": {
+    "id": "cus_01hs132k0beqns37pd1wp2d0f4",
+    "name": "Enrique Schaefer",
+    "kind": "business",
+    "email": "Enrique.Schaefer31@yahoo.com",
+    "address": {
+      "line1": "353 Waelchi Harbors",
+      "line2": null,
+      "city": "Fredaton",
+      "postalCode": "22472-6405",
+      "country": "Saint Kitts and Nevis"
+    },
+    "tax": null,
+    "signedUpAt": "2024-03-15T12:58:30.7979673+00:00"
+  }
+}
+```
+
+### productCreated
+```json
+{
+  "secret": "whs_01hs11wsgbe63bsbg64e54e3xs",
+  "type": "productCreated",
+  "payload": {
+    "id": "pr_01hs132feje6gbvbythnrh7zxt",
+    "name": "Refined Steel Mouse",
+    "sku": "PRACT_1",
+    "unit": "can",
+    "tax": null,
+    "createdAt": "2024-03-15T12:58:27.1552927+00:00"
+  }
+}
+```
+
+
+### saleCreated
+```json
+{
+  "secret": "whs_01hs11wsgbe63bsbg64e54e3xs",
+  "type": "saleCreated",
+  "payload": {
+    "id": "sale_01hs1327ceej7tgdgew2hj08tr",
+    "customerId": "cus_01hs1327ceej8axhhh6shp0cjx",
+    "customerName": "Joanne Rau",
+    "currency": "DKK",
+    "reference": null,
+    "items": [
+      {
+        "id": "saleit_01hs1327c9egtbenqxybwq8zj5",
+        "quantity": 69.24131815535615,
+        "unitPrice": 7711.666803739986526,
+        "vatRate": 0.9420360101529487,
+        "subtotal": 8084.474668786580371,
+        "totalTax": 2989.061927086723696,
+        "total": 8868.08967701113414,
+        "vatStatus": "exempt",
+        "name": "Gorgeous Plastic Sausages",
+        "sku": "SLEEK_1",
+        "unit": "box",
+        "productId": null
+      },
+      {
+        "id": "saleit_01hs1327cde28v14r6mjtnzyd1",
+        "quantity": 4.301978466284517,
+        "unitPrice": 6674.690914000046497,
+        "vatRate": 0.183598778725233,
+        "subtotal": 510.9524723200252708,
+        "totalTax": 9881.959474739679337,
+        "total": 984.714550446855997,
+        "vatStatus": "taxable",
+        "name": "Fantastic Plastic Fish",
+        "sku": "INCRE_1",
+        "unit": "can",
+        "productId": null
+      }
+    ],
+    "subtotal": 17038.0399984936999016,
+    "taxTotal": 26120.083545101966657,
+    "total": 26844.372158250251336,
+    "createdAt": "2024-03-15T12:58:18.9195614+00:00"
+  }
+}
+```

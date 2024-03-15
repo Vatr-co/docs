@@ -54,7 +54,7 @@
     {
       "group": "Essentials",
       "pages": [
-        "essentials/objects",
+        "essentials/webhooks",
         "essentials/settings",
         "essentials/reusable-snippets"
       ]
