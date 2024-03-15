@@ -1,32 +1,73 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
+    "title": "Gilbert API",
+    "description": "The Gilbert API",
+    "contact": {
+      "name": "Gilbert Inc.",
+      "email": "hello@gilbert.com"
     },
-    "version": "1.0.0"
+    "version": "v1"
   },
-  "servers": [
-    {
-      "url": "http://sandbox.mintlify.com"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
   "paths": {
-    "/plants": {
+    "/api/api-keys": {
+      "post": {
+        "tags": [
+          "ApiKeys"
+        ],
+        "operationId": "CreateApiKey",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiKeyCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "tags": [
+          "ApiKeys"
+        ],
+        "operationId": "GetApiKeys",
         "parameters": [
           {
-            "name": "limit",
+            "name": "page",
             "in": "query",
-            "description": "The maximum number of results to return",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -35,60 +76,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ApiKeyGetBffResponsePaginatedResponse"
                 }
               }
             }
@@ -96,32 +88,1570 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/api/api-keys/{id}": {
+      "get": {
+        "tags": [
+          "ApiKeys"
+        ],
+        "operationId": "GetApiKeyById",
         "parameters": [
           {
             "name": "id",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiKeyGetByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/customers": {
+      "post": {
+        "tags": [
+          "Customers"
+        ],
+        "operationId": "CreateCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "operationId": "GetCustomers",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
             "schema": {
               "type": "integer",
-              "format": "int64"
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/{id}": {
+      "delete": {
+        "tags": [
+          "Customers"
+        ],
+        "operationId": "DeleteCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
             }
           }
         ],
         "responses": {
           "204": {
-            "description": "Plant deleted",
-            "content": {}
+            "description": "No Content"
           },
-          "400": {
-            "description": "unexpected error",
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "operationId": "GetCustomerById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/CustomerGetByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/customers/{id}/insights": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "operationId": "GetCustomerInsightsById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerGetInsightsByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/customers/insights": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "operationId": "GetCustomerInsights",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerGetInsightsBffResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/search": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "operationId": "SearchCustomers",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/data/generate": {
+      "post": {
+        "tags": [
+          "Data"
+        ],
+        "operationId": "CreateTestData",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DummyDataCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/merchants/{merchantId}/accept-invite": {
+      "post": {
+        "tags": [
+          "Merchants"
+        ],
+        "operationId": "AcceptInvite",
+        "parameters": [
+          {
+            "name": "merchantId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/merchants": {
+      "post": {
+        "tags": [
+          "Merchants"
+        ],
+        "operationId": "CreateMerchant",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Merchants"
+        ],
+        "operationId": "GetMerchants",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MerchantGetBffResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/merchants/pending-invites": {
+      "get": {
+        "tags": [
+          "Merchants"
+        ],
+        "operationId": "GetPendingInvites",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MerchantGetPendingInvitesBffResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/merchants/users": {
+      "post": {
+        "tags": [
+          "Merchants"
+        ],
+        "operationId": "InviteUserToMerchant",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MerchantInviteUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "operationId": "GetNotifications",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{notificationId}/mark-as-read": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "operationId": "MarkNotificationAsRead",
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "post": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "CreateProduct",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "GetProducts",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{sku}/exists": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "ProductExists",
+        "parameters": [
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products/{id}": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "GetProductById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductGetByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "UpdateProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/products/{id}/insights": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "GetProductInsightsById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductGetInsightsByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/products/search": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "operationId": "SearchProducts",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales": {
+      "post": {
+        "tags": [
+          "Sales"
+        ],
+        "operationId": "CreateSale",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaleCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "operationId": "GetSales",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales/{id}": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "operationId": "GetSaleById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleGetByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/sales/search": {
+      "get": {
+        "tags": [
+          "Sales"
+        ],
+        "operationId": "SearchSales",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SaleSearchDetailsBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/time-authorized": {
+      "get": {
+        "tags": [
+          "Time"
+        ],
+        "operationId": "GetAuthorizedTime",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/time": {
+      "get": {
+        "tags": [
+          "Time"
+        ],
+        "operationId": "GetTime",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "CreateUser",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "GetMe",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserGetMeBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/vat/validate": {
+      "post": {
+        "tags": [
+          "Vat Numbers"
+        ],
+        "operationId": "ValidateVat",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateVatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VatValidationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/vat/rates": {
+      "get": {
+        "tags": [
+          "Vat Rates"
+        ],
+        "operationId": "GetVatRates",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VatRateGetBffResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Vat Rates"
+        ],
+        "operationId": "UpsertVatRates",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/webhooks": {
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "CreateWebhook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "GetWebhooks",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/webhooks/{id}": {
+      "delete": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "DeleteWebhook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "GetWebhookById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookGetByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "UpdateWebhook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/webhooks/{id}/disable": {
+      "put": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "DisableWebhook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/webhooks/{id}/enable": {
+      "put": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "EnableWebhook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/webhooks/{id}/test": {
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "TestWebhook",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookTestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/webhooks/{webhookId}/events/{id}": {
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "GetWebhookEventById",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEventGetByIdBffResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/webhooks/{id}/events": {
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "GetWebhookEvents",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEventGetBffResponsePaginatedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/webhooks/{webhookId}/events/{id}/resend": {
+      "post": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "ResendWebhookEvent",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/webhooks/{webhookId}/events/search": {
+      "get": {
+        "tags": [
+          "Webhooks"
+        ],
+        "operationId": "SearchWebhookEvents",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookEventGetBffResponsePaginatedResponse"
                 }
               }
             }
@@ -132,64 +1662,1438 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
+      "AddressRequest": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "maxLength": 150,
+            "type": "string",
+            "nullable": true
+          },
+          "line2": {
+            "maxLength": 150,
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "maxLength": 150,
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "maxLength": 20,
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AddressResponse": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "type": "string",
+            "nullable": true
+          },
+          "line2": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiKeyCreateRequest": {
         "required": [
           "name"
         ],
         "type": "object",
         "properties": {
           "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
+            "minLength": 1,
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "ApiKeyGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
           },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiKeyGetBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiKeyGetBffResponse"
             }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
           }
-        ]
+        },
+        "additionalProperties": false
       },
-      "Error": {
+      "ApiKeyGetByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerCreateRequest": {
         "required": [
-          "error",
-          "message"
+          "name"
         ],
         "type": "object",
         "properties": {
-          "error": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CustomerTypeRequest"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressRequest"
+          },
+          "tax": {
+            "$ref": "#/components/schemas/CustomerCreateTaxInformationRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerCreateTaxInformationRequest": {
+        "required": [
+          "vatNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string"
+          },
+          "vatNumber": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CustomerTaxStatusRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CustomerTypeBffResponse"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponse"
+          },
+          "tax": {
+            "$ref": "#/components/schemas/CustomerGetByIdTaxInformationBffResponse"
+          },
+          "signedUpAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerGetBffResponse"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CustomerTypeBffResponse"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponse"
+          },
+          "tax": {
+            "$ref": "#/components/schemas/CustomerGetByIdTaxInformationBffResponse"
+          },
+          "signedUpAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetByIdTaxInformationBffResponse": {
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "vatNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/CustomerTaxStatusBffResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetInsightsBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "newCustomers": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetInsightsByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "numberOfSales": {
             "type": "integer",
             "format": "int32"
           },
-          "message": {
+          "totalSalesAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "sales": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerGetInsightsByIdSalesResponse"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerGetInsightsByIdEventsResponse"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetInsightsByIdEventTypeResponse": {
+        "enum": [
+          "CustomerCreated",
+          "SaleCreated"
+        ],
+        "type": "string"
+      },
+      "CustomerGetInsightsByIdEventsResponse": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/CustomerGetInsightsByIdEventTypeResponse"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actionedBy": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
+      },
+      "CustomerGetInsightsByIdSalesResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CustomerTaxStatusBffResponse": {
+        "enum": [
+          "Taxable",
+          "Exempt",
+          "ReverseCharge"
+        ],
+        "type": "string"
+      },
+      "CustomerTaxStatusRequest": {
+        "enum": [
+          "Taxable",
+          "Exempt",
+          "ReverseCharge"
+        ],
+        "type": "string"
+      },
+      "CustomerTypeBffResponse": {
+        "enum": [
+          "Consumer",
+          "Business"
+        ],
+        "type": "string"
+      },
+      "CustomerTypeRequest": {
+        "enum": [
+          "Consumer",
+          "Business"
+        ],
+        "type": "string"
+      },
+      "DummyDataCreateRequest": {
+        "type": "object",
+        "properties": {
+          "customerCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "productCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "saleCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MerchantCreateRequest": {
+        "required": [
+          "country",
+          "currency",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string"
+          },
+          "country": {
+            "maxLength": 2,
+            "minLength": 2,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MerchantGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantGetUserBffResponse"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MerchantGetPendingInvitesBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "merchants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantGetPendingInvitesMerchantDetailsBffResponse"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MerchantGetPendingInvitesMerchantDetailsBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "invitedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MerchantGetUserBffResponse": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/MerchantGetUserStatusResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MerchantGetUserStatusResponse": {
+        "enum": [
+          "Owner",
+          "Invited",
+          "Active"
+        ],
+        "type": "string"
+      },
+      "MerchantInviteUserPermissionRequest": {
+        "enum": [
+          "ApiKeyCreate",
+          "CustomerCreate",
+          "CustomerRead",
+          "CustomerDelete",
+          "MerchantInviteUser",
+          "ProductCreate",
+          "ProductDelete",
+          "ProductUpdate",
+          "SaleCreate",
+          "WebhookCreate",
+          "WebhookDelete",
+          "WebhookDisable",
+          "WebhookEnable",
+          "WebhookUpdate",
+          "WebhookEventResend",
+          "WebhookEventSendTest"
+        ],
+        "type": "string"
+      },
+      "MerchantInviteUserRequest": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MerchantInviteUserPermissionRequest"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/NotificationGetTypeBffResponse"
+          },
+          "payload": { },
+          "status": {
+            "$ref": "#/components/schemas/NotificationGetStatusBffResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationGetBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationGetBffResponse"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationGetStatusBffResponse": {
+        "enum": [
+          "Unread",
+          "Read"
+        ],
+        "type": "string"
+      },
+      "NotificationGetTypeBffResponse": {
+        "enum": [
+          "UserInvitedToMerchant"
+        ],
+        "type": "string"
+      },
+      "PaginatedResponsePagingInfo": {
+        "type": "object",
+        "properties": {
+          "lastPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currentPage": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "ProductCreateRequest": {
+        "required": [
+          "name",
+          "sku"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The name of the product. (e.g. \"Chocolate ice cream\")"
+          },
+          "sku": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The stock keeping unit of the product. (e.g. \"CHOC-IC-001\")"
+          },
+          "unit": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "The unit of the product. (e.g. \"scoop\", \"box\")",
+            "nullable": true
+          },
+          "tax": {
+            "$ref": "#/components/schemas/ProductCreateTaxInformationRequest"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Create a new product"
+      },
+      "ProductCreateTaxInformationRequest": {
+        "required": [
+          "isExempt"
+        ],
+        "type": "object",
+        "properties": {
+          "isExempt": {
+            "type": "boolean",
+            "description": "Whether the product is exempt from tax."
+          },
+          "category": {
+            "$ref": "#/components/schemas/ProductTaxInformationCategory"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Create a new product tax"
+      },
+      "ProductGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "tax": {
+            "$ref": "#/components/schemas/ProductGetByIdTaxInformationBffResponse"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductGetBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductGetBffResponse"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductGetByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "tax": {
+            "$ref": "#/components/schemas/ProductGetByIdTaxInformationBffResponse"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductGetByIdTaxInformationBffResponse": {
+        "type": "object",
+        "properties": {
+          "isExempt": {
+            "type": "boolean"
+          },
+          "category": {
+            "$ref": "#/components/schemas/ProductTaxInformationCategory"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductGetInsightsByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "numberOfSales": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalSalesAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "sales": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductGetInsightsByIdSalesResponse"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductGetInsightsByIdEventsResponse"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductGetInsightsByIdEventTypeResponse": {
+        "enum": [
+          "ProductCreated",
+          "ProductUpdated",
+          "SaleCreated"
+        ],
+        "type": "string"
+      },
+      "ProductGetInsightsByIdEventsResponse": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/ProductGetInsightsByIdEventTypeResponse"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actionedBy": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductGetInsightsByIdSalesResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProductTaxInformationCategory": {
+        "enum": [
+          "DigitalServices"
+        ],
+        "type": "string"
+      },
+      "ProductUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "tax": {
+            "$ref": "#/components/schemas/ProductCreateTaxInformationRequest"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleCreateOneOffLineItemRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "sku": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "quantity": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "number",
+            "format": "double"
+          },
+          "unitPrice": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleCreateProductItemRequest": {
+        "required": [
+          "productId"
+        ],
+        "type": "object",
+        "properties": {
+          "productId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "quantity": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "number",
+            "format": "double"
+          },
+          "unitPrice": {
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleCreateRequest": {
+        "required": [
+          "currency",
+          "customerId"
+        ],
+        "type": "object",
+        "properties": {
+          "currency": {
+            "maxLength": 3,
+            "minLength": 3,
+            "type": "string"
+          },
+          "customerId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "oneOffItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleCreateOneOffLineItemRequest"
+            }
+          },
+          "productItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleCreateProductItemRequest"
+            }
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "numberOfItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleGetBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleGetBffResponse"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleGetByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string",
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleGetByIdItemBffResponse"
+            }
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxTotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleGetByIdItemBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "unitPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "vatRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "subtotal": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalTax": {
+            "type": "number",
+            "format": "double"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "vatStatus": {
+            "$ref": "#/components/schemas/SaleItemVatBffStatus"
+          },
+          "name": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string",
+            "nullable": true
+          },
+          "unit": {
+            "type": "string",
+            "nullable": true
+          },
+          "productId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleItemVatBffStatus": {
+        "enum": [
+          "Taxable",
+          "Exempt",
+          "ZeroRated"
+        ],
+        "type": "string"
+      },
+      "SaleSearchDetailsBffResponse": {
+        "type": "object",
+        "properties": {
+          "customerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "details": {
+            "$ref": "#/components/schemas/SaleGetBffResponse"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaleSearchDetailsBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaleSearchDetailsBffResponse"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserGetMeBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "merchants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserGetMeMerchantBffResponse"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserGetMeMerchantBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidateVatRequest": {
+        "required": [
+          "vatNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "vatNumber": {
+            "minLength": 3,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VatDetails": {
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string"
+          },
+          "vatNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "requestDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VatRateGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VatValidationResponse": {
+        "type": "object",
+        "properties": {
+          "vatServiceIsAvailable": {
+            "type": "boolean"
+          },
+          "isValid": {
+            "type": "boolean"
+          },
+          "details": {
+            "$ref": "#/components/schemas/VatDetails"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookCreateRequest": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventTypeBffRequest"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookEventGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "webhookId": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WebhookEventTypeBffResponse"
+          },
+          "url": {
+            "type": "string"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookEventGetBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventGetBffResponse"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookEventGetByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "webhookId": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WebhookEventTypeBffResponse"
+          },
+          "url": {
+            "type": "string"
+          },
+          "payload": { },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "statusCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "response": { }
+        },
+        "additionalProperties": false
+      },
+      "WebhookEventTypeBffRequest": {
+        "enum": [
+          "Everything",
+          "ApiKeyCreated",
+          "CustomerCreated",
+          "ProductCreated",
+          "SaleCreated"
+        ],
+        "type": "string"
+      },
+      "WebhookEventTypeBffResponse": {
+        "enum": [
+          "Everything",
+          "ApiKeyCreated",
+          "CustomerCreated",
+          "ProductCreated",
+          "SaleCreated"
+        ],
+        "type": "string"
+      },
+      "WebhookGetBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventTypeBffResponse"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/WebhookStatusBffResponse"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookGetBffResponsePaginatedResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookGetBffResponse"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PaginatedResponsePagingInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookGetByIdBffResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventTypeBffResponse"
+            }
+          },
+          "status": {
+            "$ref": "#/components/schemas/WebhookStatusBffResponse"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookStatusBffResponse": {
+        "enum": [
+          "Enabled",
+          "Disabled"
+        ],
+        "type": "string"
+      },
+      "WebhookTestRequest": {
+        "type": "object",
+        "properties": {
+          "eventType": {
+            "$ref": "#/components/schemas/WebhookEventTypeBffRequest"
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
+      "Bearer": {
         "type": "http",
-        "scheme": "bearer"
+        "description": "Please enter token",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
 }
